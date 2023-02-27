@@ -69,7 +69,6 @@ export const constantRoutes = [
       title: "权限管理",
       icon: "el-icon-s-help",
     },
-
     component: Layout,
     children: [
       {
@@ -78,8 +77,32 @@ export const constantRoutes = [
         meta: {
           title: "品牌管理",
         },
-        // component: () => import("@/views/tradeMark/index.vue"),
-        component: () => import("@/views/table/index"),
+        component: () => import("@/views/tradeMark/index.vue"),
+      },
+      {
+        path: "/manage/trademarsk",
+        name: "trad2emark",
+        meta: {
+          title: "平台属性管理",
+        },
+        component: () => import("@/views/typeKey"),
+      },
+      {
+        path: "/manage/tradeamasrk",
+        name: "trad5emark",
+        meta: {
+          title: "SPU管理",
+        },
+        component: () => import("@/views/tradeMark/index.vue"),
+      },
+      {
+        path: "/manage/trademadasrk",
+        name: "tradedsmark",
+        meta: {
+          title: "SKU管理",
+        },
+        component: () => import("@/views/tradeMark/index.vue"),
+        // component: () => import("@/views/table/index"),
       },
     ],
   },
