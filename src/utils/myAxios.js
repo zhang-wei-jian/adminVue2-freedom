@@ -2,10 +2,15 @@ import axios from "axios";
 
 const myAxios = axios.create({
   // baseURL: import.meta.env && '/app-dev',
-  baseURL: "/app-dev",
+  // baseURL: "/app-dev",
+
+  baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
+  // withCredentials: true, // send cookies when cross-domain requests
+  timeout: 5000, // request timeout
 });
 
 myAxios.interceptors.request.use((config) => {
+  console.log(process.env.VUE_APP_BASE_API);
   // 请求
   return config;
 });

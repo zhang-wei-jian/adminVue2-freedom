@@ -26,7 +26,7 @@ export function reqGetCategory3List(id2) {
   //获取3下拉列表
   return myAxios({
     method: "get",
-    url: `${Apis.getCategory2}/${id2}`,
+    url: `${Apis.getCategory3}/${id2}`,
   });
 }
 export function reqTypeKeyList(category1Id, category2Id, category3Id) {

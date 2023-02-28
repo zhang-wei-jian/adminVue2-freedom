@@ -7,7 +7,7 @@ import {
 const state = {
   select1ID: "",
   select2ID: "",
-  select3ID: "",
+  select3ID: "1",
   selectSelectList1: [],
   selectSelectList2: [],
   selectSelectList3: [],
@@ -44,7 +44,7 @@ const actions = {
     commit("GET_SELECT_LIST2", { data, id1 });
   },
   async getSelect3({ commit }, id2) {
-    // 获取分类列表1
+    // 获取分类列表3
     const data = await reqGetCategory3List(id2);
     commit("GET_SELECT_LIST3", { data, id2 });
   },

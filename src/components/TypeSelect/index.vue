@@ -12,13 +12,13 @@
         </el-option>
       </el-select>
       <!-- 二级分类列表 -->
-      {{ select2ID }}
+
       <el-select v-model="select2ID" @change="select2Change">
         <el-option
           v-for="item of selectList2"
           :key="item.id"
           :label="item.name"
-          :value="item.category1Id"
+          :value="item.id"
         >
         </el-option>
       </el-select>
@@ -28,7 +28,7 @@
           v-for="item of selectList3"
           :key="item.id"
           :label="item.name"
-          :value="item.category1Id"
+          :value="item.id"
         >
         </el-option>
       </el-select>
@@ -62,6 +62,8 @@ export default {
       this.$store.dispatch("typeSelect/getSelect2", id1);
     },
     select2Change(id2) {
+      console.log(id2);
+
       // 拿着id1去获取列表2
       this.select3ID = "";
       this.$store.dispatch("typeSelect/getSelect3", id2);
@@ -79,14 +81,14 @@ export default {
     ...mapState({
       selectList2: (state) => state.typeSelect.selectSelectList2,
       selectList3: (state) => state.typeSelect.selectSelectList3,
-      // select1ID: (state) => state.typeSelect.select1ID,
-      // select2ID: (state) => state.typeSelect.select2ID,
-      // select3ID: (state) => state.typeSelect.select3ID,
     }),
   },
   mounted() {
     //  获取列表1
     this.$store.dispatch("typeSelect/getSelect1");
+    this.select1ID = this.$store.state.typeSelect.select1ID;
+    this.select2ID = this.$store.state.typeSelect.select2ID;
+    this.select3ID = this.$store.state.typeSelect.select3ID;
   },
 };
 </script>

@@ -178,7 +178,7 @@ mounted() {
 
 
 
-页面上两个地方都用到同一个组件，把他封装一下
+页面上两个地方都用到同一个数据，切换页面还是存在的，要放store
 
 新建了一个store的model模块，并且开启了命名空间,考虑到要在多个组件页面公用一份数据，就把这些数据集中管理起来
 
@@ -266,7 +266,7 @@ export default {
         </el-button>
 ```
 
-添加流程，1.给table绑定一个空数组，每次添加的时候就去push一行新添加的属性值，2.这时候为了让用户不在修改input而且是可读的没有用disable而是用了 :readonly="keyValue.length >=1"，禁用并且可读取输入框的内容3.为了用户体验，添加的新行会有个输入框，会直接获取焦点，由于模板加载是异步的，我们的同步触发焦点可能在节点创建之前执行所以 this.$nextTick() 4.输入框输入完成后失去焦点把当前状态修改false，让输入框换掉，这里给每一行数据都添加了一个状态，只有点击和失去焦点改变状态让输入框和文本来回切换
+添加流程，1.给table绑定一个空数组，每次添加的时候就去push一行新添加的属性值，2.这时候为了让用户不在修改input而且是可读的没有用disable而是用了 :readonly="keyValue.length >=1"，禁用并且可读取输入框的内容3.为了用户体验，添加的新行会有个输入框，会直接获取焦点，由于模板加载是异步的，这时候因为我们push的那一项数据导致页面模板响应式的异步更新,我们的同步触发焦点可能在节点创建之前执行所以 this.$nextTick() 4.输入框输入完成后失去焦点把当前状态修改false，让输入框换掉，这里给每一行数据都添加了一个状态，只有点击和失去焦点改变状态让输入框和文本来回切换
 
 ```js
  <el-table-column label="属性值名称">
@@ -284,4 +284,82 @@ export default {
 接下来修复bug，如果输入框是空的是不能添加进去的，判断如果是空也是用fliter过滤数组中的当前行不一样的
 
 提交数据，最后收集表单进行post发送请求就行了
+
+#### SPU
+
+接下来做SPU，这个页面已经第二次使用分页器了，分页器就那么几个total，pageNo，pagesize，本身是可以复用的，会想到混入mixin但是vue2的混入只能做到**抽离逻辑和复用**，并不能改变其中的状态，非常遗憾
+
+首先引入三级分类组件，然后仓库拿分类id3的值，带着当前页和pagesize发送请求拿Spu列表
+
+#### **SPU列表**
+
+然后随着用户选着分类3，要更新页面，watch监视这个3id就行了，有变动发请求获取数据
+
+#### **SPU表单收集**
+
+![image-20230228163140341](C:\Users\10482\AppData\Roaming\Typora\typora-user-images\image-20230228163140341.png)
+
+进来要发送两个请求获取两个下拉列表提供给选，然后上传图片发送请求拿每次图片成功后后端返回的图片路径，给自己定好的图片数组push就行了
+
+![image-20230228163031882](C:\Users\10482\AppData\Roaming\Typora\typora-user-images\image-20230228163031882.png)
+
+**现在项目已经很臃肿了**，这主要是页面逻辑多，我们当前表单拆出一个组件出来，销售属性单独的一个组件，他依赖到的数据通过props传递进去另一个组件
+
+接下来其中是比较繁琐的table的![image-20230228163012488](C:\Users\10482\AppData\Roaming\Typora\typora-user-images\image-20230228163012488.png)
+
+做销售选项，我要实现用户选过的属性然后点击添加后他不在出现在下拉框中，要对这个下拉列表数组进行处理。用户选过的销售属性id会通过v-model绑定一份，我利用这个id来处理:添加按钮点击触发一个事件
+
+```js
+async getAttrKey() {
+      this.attrSelectList = this.attrKeyList = await reqAttrKey(this.select3id);
+    },
+    addAttrItem() {
+      // 属性选了吧不是空的
+      if (!this.attrValue) return;
+      // 根据id找到你选中的对应的那一项我要找到当前项目，然后保存一份
+      const attrItem = this.attrKeyList.find((item) => {
+        return item.id === this.attrValue;
+      });
+      this.attrName = attrItem.saleAttrName;
+      // 过滤掉选中这个之外的，剩余的给你接着选
+      this.attrKeyList = this.attrKeyList.filter((item) => {
+        return Number(item.id) !== Number(this.attrValue);
+      });
+
+      const rowItem = {
+        baseSaleAttrId: this.attrValue,
+        saleAttrName: attrItem.saleAttrName,
+        spuSaleAttrValueList: [],
+        editState: false,
+      };
+      this.tabelValue.push(rowItem);
+    },
+```
+
+然后是![image-20230228163720641](C:\Users\10482\AppData\Roaming\Typora\typora-user-images\image-20230228163720641.png)
+
+![image-20230228163803076](C:\Users\10482\AppData\Roaming\Typora\typora-user-images\image-20230228163803076.png)
+
+所以我给每一行都定义一个编辑的状态，根据状态来显示是按钮button还是输入框input，1.按钮点击的时候改变当前状态,显示出来input框，拿到input的ref对象，需要nextTick的回调函数来获取元素，在光标，触发光标人性化操作，3.随后在失去光标的时候,对当前行的数组进行push，name就是input框表单收集到的值
+
+```js
+addTag(row) {
+      // 添加按钮改变input状态
+      row.editState = true;
+      this.$nextTick(() => {
+        this.$refs.inputRef.focus();
+      });
+    },
+    inputBlur(row) {
+      // 失去光标添加进去刚刚input收集的数据
+      const tagItem = {
+        baseSaleAttrId: Number(this.attrValue),
+        saleAttrName: this.saleAttrName,
+        saleAttrValueName: this.tagValue,
+      };
+      row.spuSaleAttrValueList.push(tagItem);
+
+      row.editState = false;
+    },
+```
 

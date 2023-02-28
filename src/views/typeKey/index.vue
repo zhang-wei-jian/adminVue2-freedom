@@ -1,6 +1,6 @@
 <template>
   <div>
-    <typeSelect></typeSelect>
+    <TypeSelect></TypeSelect>
     <el-card>
       <div v-if="state === 'list'">
         <el-button @click="state = 'add'" type="primary">添加属性</el-button>
@@ -9,7 +9,7 @@
           <el-table-column label="属性名称" prop="attrName"></el-table-column>
           <el-table-column label="标签" prop="">
             <template v-slot="{ row }">
-              <el-tag v-for="item of row.attrValueList">{{
+              <el-tag v-for="(item, index) of row.attrValueList" :key="index">{{
                 item.valueName
               }}</el-tag>
             </template>
@@ -30,7 +30,7 @@
 </template>
 
 <script>
-import typeSelect from "@/components/TypeSelect";
+import TypeSelect from "@/components/TypeSelect";
 import { reqTypeKeyList } from "@/api/APItypeSelect";
 import { mapState } from "vuex";
 import formData from "./formData";
@@ -72,7 +72,7 @@ export default {
     },
   },
   components: {
-    typeSelect,
+    TypeSelect,
     formData,
   },
 };

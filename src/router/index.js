@@ -88,12 +88,13 @@ export const constantRoutes = [
         component: () => import("@/views/typeKey"),
       },
       {
-        path: "/manage/tradeamasrk",
-        name: "trad5emark",
+        path: "/manage/spu",
+        name: "spu",
         meta: {
           title: "SPU管理",
         },
-        component: () => import("@/views/tradeMark/index.vue"),
+        component: () => import("@/views/SPU/index.vue"),
+        // component: () => import("@/views/tradeMark/index.vue"),
       },
       {
         path: "/manage/trademadasrk",
@@ -101,8 +102,8 @@ export const constantRoutes = [
         meta: {
           title: "SKU管理",
         },
+        // component: () => import("@/views/tradeMark/index.vue"),
         component: () => import("@/views/tradeMark/index.vue"),
-        // component: () => import("@/views/table/index"),
       },
     ],
   },

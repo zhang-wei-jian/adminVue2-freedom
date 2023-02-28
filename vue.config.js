@@ -28,6 +28,7 @@ module.exports = {
   outputDir: 'dist',
   assetsDir: 'static',
   lintOnSave: process.env.NODE_ENV === 'development',
+  //代码检查取决于项目
   productionSourceMap: false,
   devServer: {
     port: port,
