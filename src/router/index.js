@@ -42,71 +42,26 @@ export const constantRoutes = [
     hidden: true,
   },
 
-  // {
-  //   path: "/",
-  //   component: Layout,
-  //   redirect: "/dashboard",
-  //   children: [
-  //     {
-  //       path: "dashboard",
-  //       name: "Dashboard",
-  //       component: () => import("@/views/dashboard/index"),
-  //       meta: { title: "Dashboard", icon: "dashboard" },
-  //     },
-  //   ],
-  // },
-  /////我自己的开始///////////
   {
     path: "/",
-    // component: Layout,
-    redirect: "/manage",
-  },
-  {
-    path: "/manage",
-    name: "manage",
-    redirect: "/manage/trademark",
-    meta: {
-      title: "权限管理",
-      icon: "el-icon-s-help",
-    },
     component: Layout,
+    redirect: "/dashboard",
     children: [
       {
-        path: "/manage/trademark",
-        name: "trademark",
-        meta: {
-          title: "品牌管理",
-        },
-        component: () => import("@/views/tradeMark/index.vue"),
-      },
-      {
-        path: "/manage/trademarsk",
-        name: "trad2emark",
-        meta: {
-          title: "平台属性管理",
-        },
-        component: () => import("@/views/typeKey"),
-      },
-      {
-        path: "/manage/spu",
-        name: "spu",
-        meta: {
-          title: "SPU管理",
-        },
-        component: () => import("@/views/SPU/index.vue"),
-        // component: () => import("@/views/tradeMark/index.vue"),
-      },
-      {
-        path: "/manage/trademadasrk",
-        name: "tradedsmark",
-        meta: {
-          title: "SKU管理",
-        },
-        // component: () => import("@/views/tradeMark/index.vue"),
-        component: () => import("@/views/tradeMark/index.vue"),
+        path: "dashboard",
+        name: "Dashboard",
+        component: () => import("@/views/dashboard/index"),
+        meta: { title: "Dashboard", icon: "dashboard" },
       },
     ],
   },
+  /////我自己的开始///////////
+  {
+    path: "/home",
+    component: Layout,
+    redirect: "/sb",
+  },
+
 
   // {
   //   path: '/example',
@@ -215,6 +170,94 @@ export const constantRoutes = [
 
   // 404 page must be placed at the end !!!
   { path: "*", redirect: "/404", hidden: true },
+];
+// 动态路由渲染
+export const allAsyncRoutes = [
+  {
+    path: "/acl",
+    name: "Acl",
+    redirect: "/acl/user",
+    meta: {
+      title: "权限管理",
+      icon: "el-icon-user",
+    },
+    component: Layout,
+    children: [
+      {
+        path: "/acl/user",
+        name: "User",
+        meta: {
+          title: "用户管理",
+        },
+        component: () => import("@/views/acl/user"),
+      },
+      {
+        path: "/acl/role",
+        name: "Role",
+        meta: {
+          title: "角色管理",
+        },
+        component: () => import("@/views/acl/role"),
+      },
+      {
+        path: "/acl/permission",
+        name: "Permission",
+        meta: {
+          title: "菜单管理",
+        },
+        component: () => import("@/views/acl/permission"),
+      },
+
+    ],
+  },
+  // 下面是产品管理
+  {
+    path: "/product",
+    name: "Product",
+    redirect: "/product/trademark",
+    meta: {
+      title: "商品管理",
+      icon: "el-icon-goods",
+    },
+    component: Layout,
+    children: [
+      {
+        path: "/product/trademark",
+        name: "Trademark",
+        meta: {
+          title: "品牌管理",
+        },
+        component: () => import("@/views/Product/tradeMark"),
+        // component: () => import("@/views/tradeMark/index.vue"),
+      },
+      {
+        path: "/product/trademarsk",
+        name: "Attr",
+        meta: {
+          title: "平台属性管理",
+        },
+        // component: () => import("@/views/typeKey"),
+        component: () => import("@/views/Product/typeKey"),
+      },
+      {
+        path: "/product/spu",
+        name: "Spu",
+        meta: {
+          title: "SPU管理",
+        },
+        // component: () => import("@/views/SPU/index.vue"),
+        component: () => import("@/views/Product/SPU"),
+      },
+      {
+        path: "/product/trademadasrk",
+        name: "Sku",
+        meta: {
+          title: "SKU管理",
+        },
+        component: () => import("@/views/Product/SPU"),
+      },
+    ],
+  },
 ];
 
 const createRouter = () =>

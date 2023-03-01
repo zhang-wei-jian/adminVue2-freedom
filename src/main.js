@@ -18,8 +18,9 @@ import "@/permission"; // permission control
 // 下面都是我的
 import VueCompositionAPI from "@vue/composition-api";
 import PubSub from "@/utils/PubSub";
-// console.log(PubSub);
 
+// 引入使用compositionAPI
+Vue.use(VueCompositionAPI);
 // console.log(
 //   PubSub.subscribe("sb", (sb) => {
 //     console.log("触发我", sb);
@@ -27,7 +28,6 @@ import PubSub from "@/utils/PubSub";
 // );
 // PubSub.publish("sb", "你爹");
 
-Vue.use(VueCompositionAPI);
 /**
  * If you don't want to use mock-server
  * you want to use MockJs for mock api
@@ -50,10 +50,9 @@ Vue.config.productionTip = false;
 
 new Vue({
   el: "#app",
-  created() {
+  beforeCreate() {
     Vue.prototype.PubSub = PubSub;
   },
-  
 
   router,
   store,

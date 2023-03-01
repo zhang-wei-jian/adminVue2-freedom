@@ -2,7 +2,7 @@ import myAxios from "@/utils/myAxios";
 
 const Apis = {
   getSpu: "/admin/product",
-  addSpu: "/admin/product/saveSpuInfo",
+  // addSpu: "/admin/product/saveSpuInfo",
   editSpu: "/admin/product/updateSpuInfo",
   SpuAttrKey: "/admin/product/spuSaleAttrList",
   addSpu: "/admin/product/saveSpuInfo",
@@ -34,11 +34,11 @@ export function reqAttrKey(id) {
 export function reqAddSpu(data) {
   console.log(data);
   // 请求添加post一条Spu;
-  console.log("sb");
+
   return myAxios({
-    method: "POST",
+    method: "post",
     url: Apis.addSpu,
-    data,
+    data: data,
   });
 }
 

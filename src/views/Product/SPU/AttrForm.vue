@@ -48,7 +48,7 @@
 
 <script>
 import { reqAttrKey } from "@/api/APISPU";
-import PubSub from "@/utils/PubSub";
+
 export default {
   name: "",
   data() {

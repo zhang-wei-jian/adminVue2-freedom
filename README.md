@@ -363,3 +363,62 @@ addTag(row) {
     },
 ```
 
+现在我们表单数据收集完成了 ，可以去发送请求，这里我想在父组件点击按钮的时候发送请求，但是我需要拿到子组件的数据，让他传给父，自定义和传个函数让子去触发都是不行的，因为子并不知道在什么时机去触发。**全局事件总线就可以做到**，但是为了练习，这里就自己封装了简易版的PubSub对象，加在了vue的原型上
+
+```js
+const PubSub = {
+  subscribeCallback: {},
+  subscribe(name, callback) {
+    if (!Array.isArray(this.subscribeCallback[name])) {
+      this.subscribeCallback[name] = [];
+    }
+    this.subscribeCallback[name].push(callback);
+  },
+  publish(name, value) {
+    this.subscribeCallback[name].forEach((item) => {
+      item(value);
+    });
+  },
+};
+export default PubSub;
+```
+
+把PubSub加在原型上
+
+```js
+new Vue({
+  el: "#app",
+  beforeCreate() {
+    Vue.prototype.PubSub = PubSub;
+  },
+  router,
+  store,
+  render: (h) => h(App),
+});
+```
+
+
+
+1.首先给子挂载的时候就订阅一条触发的回调，随后在父点击提交按钮的时候调用,为了就是父要发送了子做些什么
+
+```js
+    this.PubSub.subscribe("submitParent", () => {
+      // 把自己收集的数据发送给父
+      this.PubSub.publish("parentEditData", this.tabelValue);
+    });
+```
+
+子应该做的是把数据给到父，所以父订阅个回调函数就是触发的时候用传递过来的数据改掉自己的
+
+```js
+  this.PubSub.subscribe("parentEditData", (parentData) => {
+      // 订阅一条消息回调函数是修改我的数据
+      // 子触发父,并且携带数据,给父的data一份，实现了父触发事件通知子传递给父数据
+      this.tableValue = parentData;
+    });
+```
+
+发过来数据接收的回调;
+
+接下来表单数据全部收集完成提交就行了
+
