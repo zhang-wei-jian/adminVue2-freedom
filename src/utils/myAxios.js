@@ -20,7 +20,7 @@ myAxios.interceptors.response.use((response) => {
   // return response.data.data;
   console.log(response);
   const res = response.data;
-  if (res.code === 200) {
+  if (res.code === 200 || 20000) {
     return getData(response);
   } else {
     console.log("错误了");
@@ -35,5 +35,6 @@ function getData(Data) {
   } else {
     return Data;
   }
+
 }
 export default myAxios;

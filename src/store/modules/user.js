@@ -1,7 +1,7 @@
 import { login, logout, getInfo } from "@/api/user";
 import { getToken, setToken, removeToken } from "@/utils/auth";
 import { resetRouter } from "@/router";
-import { allAsyncRoutes } from '@/router/index'
+import { allAsyncRoutes, constantRoutes } from '@/router/index'
 import router from '@/router/index'
 const getDefaultState = () => {
   return {
@@ -36,6 +36,9 @@ const mutations = {
   SET_BUTTONS: (state, buttons) => {
     state.buttons = buttons;
   },
+  UPDATA_ROUTES: (state, data) => {
+    state.routers = data
+  }
 };
 
 const actions = {
@@ -84,7 +87,7 @@ const actions = {
       commit("SET_ROUTES", routes);
       commit("SET_BUTTONS", buttons);
       // 过滤权限路由\
-      console.log(allAsyncRoutes, '我是的');
+
 
 
       const activeRoutes = allAsyncRoutes.filter((item) => {
@@ -99,14 +102,12 @@ const actions = {
         }
       })
 
-      console.log(activeRoutes, '过滤完成的菜单数组');
 
-      // activeRoutes.forEach(item => {
-      //   console.log(item);
-      //   // router.addRoutes(item)
-      //   // console.log(router.addRoutes);
-      // })
-      router.addRoutes(activeRoutes)
+      // router.removeRoute([...activeRoutes, ...constantRoutes])
+      // 先清除注册防止白屏
+      router.addRoutes([...activeRoutes, ...constantRoutes])
+      commit('UPDATA_ROUTES', [...activeRoutes, ...constantRoutes])
+
     } catch (error) {
       this.$message.error("登录失败!");
       throw new Error("用户名或密码错误!");

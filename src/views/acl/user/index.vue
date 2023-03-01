@@ -1,12 +1,12 @@
 <template>
-  <div>
-    {{ name }}
-  </div>
+  <div>用户管理啊</div>
 </template>
 
-<script  setup>
-import { ref, reactive } from "@vue/composition-api";
-const name = ref("哈哈哈");
+<script>
+export default {
+  name: '',
+}
 </script>
 
-<style scoped></style>
+<style lang="less" scoped>
+</style>

@@ -169,7 +169,7 @@ export const constantRoutes = [
   // },
 
   // 404 page must be placed at the end !!!
-  { path: "*", redirect: "/404", hidden: true },
+  // { path: "*", redirect: "/404", hidden: true },
 ];
 // 动态路由渲染
 export const allAsyncRoutes = [
@@ -249,12 +249,12 @@ export const allAsyncRoutes = [
         component: () => import("@/views/Product/SPU"),
       },
       {
-        path: "/product/trademadasrk",
+        path: "/product/sku",
         name: "Sku",
         meta: {
           title: "SKU管理",
         },
-        component: () => import("@/views/Product/SPU"),
+        component: () => import("@/views/Product/SKU"),
       },
     ],
   },
@@ -264,7 +264,9 @@ const createRouter = () =>
   new Router({
     // mode: 'history', // require service support
     scrollBehavior: () => ({ y: 0 }),
+    // routes: [...constantRoutes, ...allAsyncRoutes],
     routes: constantRoutes,
+    mode: 'history',
   });
 
 const router = createRouter();

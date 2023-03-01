@@ -1,8 +1,7 @@
 <template>
   <div>
-    <el-card>
-      <!-- {{ dataList }} -->
-      <el-table :data="dataList">
+    <!-- <el-card>
+      <el-table :data="skuList">
         <el-table-column prop="id" label="id"></el-table-column>
         <el-table-column prop="name" label="名称"></el-table-column>
         <el-table-column label="权限值"></el-table-column>
@@ -15,35 +14,43 @@
           </template>
         </el-table-column>
       </el-table>
-    </el-card>
+    </el-card> -->
+    <TablePageComposition dsb="12321"></TablePageComposition>
   </div>
 </template>
 
 <script>
 import { ref, reactive, onMounted } from '@vue/composition-api'
-import { reqPermission } from '@/api/APIacl'
+import { reqSkuList } from '@/api/APIsku'
+import TablePageComposition from '@/components/TablePageComposition'
 export default {
-  name: '',
+  name: 'Sku',
+  components: {
+    TablePageComposition
+  },
   setup(props) {
 
-    const dataList = ref([])
-    const getPermission = async () => {
+
+    const skuList = ref([])
+    const getSkuList = async () => {
       // 获取列表啊
-      const { children } = await reqPermission()
-      dataList.value = children
-      console.log(dataList.value, '我的数据啊');
+      skuList.value = await reqSkuList()
+      console.log('sku的返回', skuList.value,);
 
     }
 
-
     onMounted(() => {
-      getPermission()
+      console.log('改在');
+
+      getSkuList()
     })
 
 
 
+
+
     return {
-      dataList,
+      skuList,
 
     }
   }
