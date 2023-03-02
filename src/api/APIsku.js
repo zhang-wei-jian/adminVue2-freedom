@@ -5,9 +5,6 @@ const APIs = {
 }
 
 
-
-
-
 export const reqSkuList = (page, limit) => {
   return myAxios.get(`${APIs.pageSku}/${page}/${limit}`)
 }

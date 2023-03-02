@@ -424,9 +424,142 @@ new Vue({
 
 
 
-随后做全选管理，我们获取登录用户信息的储存用户信息的地方是在vuex中的一个user模块，所以我们去把用户信息，包括后端返回的用户权限也存起来，后端返回的是一个权限字符串数组，里面的字符串就是我们路由对应的name，
+随后做权限管理，我们获取登录用户信息的储存用户信息的地方是在vuex中的一个user模块，所以我们去把用户信息，包括后端返回的用户权限数组拿出来，后端返回的是一个权限字符串数组，里面的字符串就是我们路由对应的name，
 
 我们过滤，拿所有写好的页面去过滤用户权限的字符串，提取出来用户可以使用的父权限，还有里面的子权限分别都是啥，然后把静态页面数组和过滤出来用户权限的数组合并一下，保存到store的仓库中，因为仓库就是靠这个仓库的值来映射然后渲染出来的侧边栏，然后我们再把这些全部路由addRoutes方法注册，就完成了
 
+### SKU
 
 
+
+接下来做个sku，我发现很多的组件都用到了这个table表格和分页器，所以我萌生了一个想法就是封装，即使是vue2，
+
+我的规划是这样的，这个组件只需要接收我们发送请求拿到的数组数据，传给组件就行了，还有就是每一个表格的列都是不一样的，怎么复用
+
+```js
+ const tableColumn = ref([
+      {
+        label: '序号',
+        prop: 'spuId'
+      },
+      {
+        label: '名称',
+        prop: 'skuName'
+      },
+      {
+        label: '描述',
+        prop: 'skuDesc'
+      },
+      {
+        label: '默认图片',
+        // prop: 'skuDefaultImg',
+        src: 'skuDefaultImg',
+        width:200
+      },
+    ])
+ 
+封装的组件用到的结构
+ <el-table :data="data">
+          <el-table-column v-for="item of tableColumn" :label="item.label" :prop="item.prop">
+            <template v-slot="{ row }">
+              <div v-if="item.prop"> {{ row[item.prop] }}</div>
+              
+              <div v-else-if="item.src">
+                <img :src="row[item.src]" alt="" :width="item.width + 'px'" :height="item.height + 'px'">
+                {{ item.src }}
+              </div>
+            </template>
+          </el-table-column>
+        </el-table>
+```
+
+**label**:原来咋写就咋写.
+
+**prop**好说，但是怎么决定每一个呢，比如用到作用域插槽的。这里我统一使用了作用域插槽来写，通过在作用域插槽的v-if来判断我是要设置按钮还是图片，是文字直接prop，
+
+```js
+ {
+        label: '序号',
+        prop: 'spuId'
+      },
+```
+
+
+
+**图片**：图片用到的地方，直接在列对象中写src，v-if看到你写的不是prop而是src，直接把图片搞上去，是不是很方便，大小也可以调整
+
+```js
+{
+        label: '默认图片',
+        src: 'skuDefaultImg',
+        width: 200
+      },
+```
+
+
+
+另一件事：**分页器**
+
+接下来我们分页器搞里头，分页器很重要的几个属性是，**总页数，当前页，页大小**
+
+我们初始化几个然后props传给组件里面给他看就行，跟着我的思路go
+
+```js
+    <TablePageComposition :tableColumn="tableColumn" :data="skuList" :total="totals" :pageNo="pageNo" :pageSize="pageSize">
+    </TablePageComposition>
+```
+
+**Props**然后为了防止报错，我们要给组件内部的props接收写成对象形式来定义默认值，如果是**引用类型**的需要写工程模式的，也就是函数返回一个：引用数据[]
+
+```js
+ foo: {
+      from: 'bar',
+      default: () => []
+    }
+  }
+```
+
+
+
+我要封装的是，你只需要传入要渲染的数组，
+
+和写个自定义事件的回调 :注意看只是**自定义事件**
+
+```js
+ <TablePageComposition :tableColumn="tableColumn" :data="skuList" :total="totals" :pageNo="pageNo" :pageSize="pageSize"
+      @updata="getSkuList">
+    </TablePageComposition>
+///////////////////////////////////////////////////////////////////
+  const getSkuList = async (pageNo = pageNo.value, pageSize = pageSize.value) => {
+      // 获取列表的函数
+
+    const getSkuList = async (page = pageNo.value, limit = pageSize.value) => {
+
+      // 获取列表的函数
+      const { records, current, pages, size, total } = await reqSkuList(page, limit)
+      skuList.value = records
+      pageNo.value = current
+      pageSize.value = size
+      totals.value = total
+
+    }
+```
+
+
+
+然后组件中的分页器会有三个事件，这些事件触发的时候$emit('updata',当前页，页大小)
+
+```js
+  methods: {
+    handleCurrentChange(pageNo) {
+      this.pageNo = pageNo
+      this.$emit('updata', this.pageNo, this.pageSize)
+    },
+    handleSizeChange(pageSize) {
+      this.pageSize = pageSize
+      this.$emit('updata', this.pageNo, this.pageSize)
+    }
+  },
+```
+
+封装进就完成了

@@ -1,59 +1,82 @@
 <template>
   <div>
-    <!-- <el-card>
-      <el-table :data="skuList">
-        <el-table-column prop="id" label="id"></el-table-column>
-        <el-table-column prop="name" label="名称"></el-table-column>
-        <el-table-column label="权限值"></el-table-column>
-        <el-table-column label="跳转权限值"></el-table-column>
-        <el-table-column label="操作">
-          <template v-slot="{ row }">
-            <el-button>加</el-button>
-            <el-button>编</el-button>
-            <el-button>删</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-    </el-card> -->
-    <TablePageComposition dsb="12321"></TablePageComposition>
+    <el-button @click="totals++">点击送地狱火</el-button>
+    <TablePageComposition :tableColumn="tableColumn" :data="skuList" :total="totals" :pageNo="pageNo" :pageSize="pageSize"
+      @updata="getSkuList">
+    </TablePageComposition>
   </div>
 </template>
 
 <script>
-import { ref, reactive, onMounted } from '@vue/composition-api'
+import { ref, onMounted } from '@vue/composition-api'
 import { reqSkuList } from '@/api/APIsku'
 import TablePageComposition from '@/components/TablePageComposition'
 export default {
   name: 'Sku',
-  components: {
-    TablePageComposition
-  },
   setup(props) {
-
-
+    // 每一行的数据
+    const tableColumn = ref([
+      {
+        label: '序号',
+        prop: 'spuId'
+      },
+      {
+        label: '名称',
+        prop: 'skuName'
+      },
+      {
+        label: '描述',
+        prop: 'skuDesc'
+      },
+      {
+        label: '默认图片',
+        src: 'skuDefaultImg',
+        width: 200
+      },
+    ])
+    // 分页的数据
+    const pageNo = ref(1)
+    const pageSize = ref(5)
+    const totals = ref(1)
     const skuList = ref([])
-    const getSkuList = async () => {
-      // 获取列表啊
-      skuList.value = await reqSkuList()
-      console.log('sku的返回', skuList.value,);
+    // console.log(pageNo.value, 'value');
+
+
+    const getSkuList = async (page = pageNo.value, limit = pageSize.value) => {
+
+      // 获取列表的函数
+      const { records, current, pages, size, total } = await reqSkuList(page, limit)
+      skuList.value = records
+      pageNo.value = current
+      pageSize.value = size
+      totals.value = total
 
     }
+    getSkuList()
 
-    onMounted(() => {
-      console.log('改在');
+    // onMounted(() => {
 
-      getSkuList()
-    })
+
+    //   getSkuList()
+    // })
 
 
 
 
 
     return {
+      getSkuList,
+      tableColumn,
       skuList,
+      pageNo,
+      pageSize,
+      totals
 
     }
-  }
+  },
+  components: {
+    TablePageComposition
+  },
 }
 </script>
 

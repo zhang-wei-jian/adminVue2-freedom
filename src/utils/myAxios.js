@@ -17,16 +17,18 @@ myAxios.interceptors.request.use((config) => {
 
 myAxios.interceptors.response.use((response) => {
   // 第一个data是拦截器返回的数据
-  // return response.data.data;
-  console.log(response);
+
+
   const res = response.data;
-  if (res.code === 200 || 20000) {
+  if (res.code === 200 || res.code === 20000 || res.status === 200) {
     return getData(response);
   } else {
     console.log("错误了");
     return res;
   }
 });
+
+
 
 function getData(Data) {
   // 递归拿data
