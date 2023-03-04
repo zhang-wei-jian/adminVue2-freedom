@@ -563,3 +563,56 @@ new Vue({
 ```
 
 封装进就完成了
+
+#### 这个组件的使用方法是
+
+```vue
+ <TablePageComposition 
+                       :tableColumn="配置列的数组对象"
+                       :data="要渲染表格的数组"
+                       :total="总条数"
+                       :pageNo="当前页"
+                       :pageSize="页大小"
+      					@updata="请求列表函数(当前页，页大小)">
+    </TablePageComposition>
+```
+
+定义列
+
+```js
+const tableColumn = ref([
+      {
+        label: '序号',
+        prop: 'spuId'
+      },
+      {
+        label: '名称',
+        prop: 'skuName'
+      },
+      {
+        label: '描述',
+        prop: 'skuDesc'
+      },
+      {
+        label: '默认图片',
+        src: 'skuDefaultImg',
+        width: 200
+      },
+    ])
+```
+
+自定义事件回调函数是尤为重要的，只要我们写好这个函数，封装的组件就可以帮我自动完成，实现翻页和重新加载页面，组件会自动帮我们触发这个函数
+
+```js
+const getSkuList = async (page = pageNo.value, limit = pageSize.value) => {
+
+      // 获取列表的函数
+      const { records, current, pages, size, total } = await reqSkuList(page, limit)
+      skuList.value = records
+      pageNo.value = current
+      pageSize.value = size
+      totals.value = total
+
+    }
+```
+

@@ -1,7 +1,6 @@
 <template>
   <div>
     <div>
-      <h1> {{ total }}</h1>
       <el-card>
         <el-table :data="data">
           <el-table-column v-for="item of tableColumn" :label="item.label" :prop="item.prop">
@@ -20,7 +19,7 @@
 
         </el-pagination>
       </el-card>
-      {{ data }}
+
     </div>
   </div>
 </template>
